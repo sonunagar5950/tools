@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter - Free Online Word & Character Counter Tool</title>
+    <meta name="description" content="Free online word counter tool. Count words, characters, sentences, and paragraphs in your text. Real-time counting with detailed statistics.">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/css/styles.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <main class="container py-4">
+        <div class="tool-container">
+            <div class="tool-header">
+                <i class="fas fa-font tool-icon"></i>
+                <h1>Word Counter</h1>
+                <p class="tool-description">Count words, characters, sentences, and paragraphs in your text. Results update in real-time as you type.</p>
+            </div>
+
+            <!-- Word Counter Tool -->
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="form-group mb-4">
+                        <textarea id="textInput" class="form-control" rows="10" placeholder="Type or paste your text here..."></textarea>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title">Words</h5>
+                                    <p id="wordCount" class="h2 mb-0">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title">Characters</h5>
+                                    <p id="charCount" class="h2 mb-0">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title">Sentences</h5>
+                                    <p id="sentenceCount" class="h2 mb-0">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title">Paragraphs</h5>
+                                    <p id="paragraphCount" class="h2 mb-0">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Statistics -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Detailed Statistics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p>Characters (no spaces): <span id="charNoSpaces">0</span></p>
+                                    <p>Reading Time: <span id="readingTime">0 minutes</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>Speaking Time: <span id="speakingTime">0 minutes</span></p>
+                                    <p>Keyword Density: <span id="keywordDensity">-</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <button class="btn btn-primary" onclick="copyText()">
+                            <i class="fas fa-copy"></i> Copy Text
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearText()">
+                            <i class="fas fa-trash"></i> Clear Text
+                        </button>
+                        <button class="btn btn-success" onclick="downloadText()">
+                            <i class="fas fa-download"></i> Download Text
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Section -->
+        <section class="ad-section text-center my-4">
+            <div class="ad-placeholder">
+                <!-- Ad space -->
+                <div class="bg-light p-3">
+                    <p class="text-muted">Advertisement Space</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="/js/main.js"></script>
+    <script>
+        // Word Counter Specific JavaScript
+        document.getElementById('textInput').addEventListener('input', function() {
+            const text = this.value;
+            
+            // Update counts
+            document.getElementById('wordCount').textContent = countWords(text);
+            document.getElementById('charCount').textContent = text.length;
+            document.getElementById('charNoSpaces').textContent = text.replace(/\s/g, '').length;
+            document.getElementById('sentenceCount').textContent = countSentences(text);
+            document.getElementById('paragraphCount').textContent = countParagraphs(text);
+            
+            // Update reading and speaking times
+            const words = countWords(text);
+            const readingTime = Math.ceil(words / 200); // Average reading speed: 200 words per minute
+            const speakingTime = Math.ceil(words / 130); // Average speaking speed: 130 words per minute
+            
+            document.getElementById('readingTime').textContent = `${readingTime} minute${readingTime !== 1 ? 's' : ''}`;
+            document.getElementById('speakingTime').textContent = `${speakingTime} minute${speakingTime !== 1 ? 's' : ''}`;
+            
+            // Update keyword density
+            if (words > 0) {
+                const topKeyword = findTopKeyword(text);
+                document.getElementById('keywordDensity').textContent = `${topKeyword.word} (${topKeyword.count} times)`;
+            }
+        });
+
+        function countWords(text) {
+            return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+        }
+
+        function countSentences(text) {
+            return text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0).length;
+        }
+
+        function countParagraphs(text) {
+            return text.split(/\n\s*\n/).filter(para => para.trim().length > 0).length;
+        }
+
+        function findTopKeyword(text) {
+            const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+            const wordCount = {};
+            
+            words.forEach(word => {
+                if (word.length > 3) { // Only count words longer than 3 characters
+                    wordCount[word] = (wordCount[word] || 0) + 1;
+                }
+            });
+            
+            let topWord = { word: '-', count: 0 };
+            for (const word in wordCount) {
+                if (wordCount[word] > topWord.count) {
+                    topWord = { word, count: wordCount[word] };
+                }
+            }
+            
+            return topWord;
+        }
+
+        function copyText() {
+            const text = document.getElementById('textInput').value;
+            navigator.clipboard.writeText(text).then(() => {
+                showSuccess('Text copied to clipboard!');
+            }).catch(() => {
+                showError('Failed to copy text. Please try again.');
+            });
+        }
+
+        function clearText() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('textInput').dispatchEvent(new Event('input'));
+        }
+
+        function downloadText() {
+            const text = document.getElementById('textInput').value;
+            if (!text.trim()) {
+                showError('Please enter some text before downloading.');
+                return;
+            }
+            
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'text-content.txt';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html> 
